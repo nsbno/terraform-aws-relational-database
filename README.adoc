@@ -16,7 +16,7 @@ Using this module, you don't have to worry about backups or managing hosts.
 
 Place this module together with your microservice infrastructure.
 
-[source, hcl]
+[source,hcl]
 ----
 module "database" {
   source = "github.com/nsbno/terraform-aws-relational-database?ref=x.y.z"
@@ -40,6 +40,22 @@ You don't have to configure anything else unless you have specific requirements 
 
 You still have to make some decisions about your database, even though it's managed.
 Here are some things to look out for.
+
+=== Choosing Instance Types
+
+The instance type you should choose is based on your workload.
+By default, a `db.t3.large` is used, which should be enough for your initial deployment (and maybe forever for smaller apps).
+
+In short you must select the instance type that
+
+* allows for the amount of connections you actually need
+* has enough temporary storage to hold your queries and index builds in memory.
+
+You can find out more about what the different instance types allow for in link:https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Managing.html[the management docs for Aurora].
+
+When your application is in production, you can also monitor the impact of your instance type by checking the `VolumeReadIOPS` and `BufferCacheHitRatio` metrics.
+The Read IOPS should stay low and the buffer cache hit ratio should stay high.
+Values that don't match this can indicate that you should upgrade to a larger instance type.
 
 === Picking versions for the database
 
