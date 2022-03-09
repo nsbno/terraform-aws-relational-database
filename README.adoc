@@ -1,0 +1,36 @@
+= Relational Database Using Aurora
+:!toc-title:
+:!toc-placement:
+:toc:
+
+Set up a PostgreSQL or MySQL database using AWS Aurora with sane defaults.
+
+toc::[]
+
+== About
+
+This module provides an PostgreSQL or MySQL instance using AWS Aurora.
+Using this module, you don't have to worry about backups or managing hosts.
+
+== Usage
+
+Place this module together with your microservice infrastructure.
+
+[source, hcl]
+----
+module "database" {
+  source = "github.com/nsbno/terraform-aws-relational-database?ref=x.y.z"
+
+  application_name = "tut-tut-tog"
+
+  engine         = "postgresql"
+  engine_version = "13"
+
+  vpc_id             = "vpc-12345"
+  subnet_ids         = ["subnet-1a2b3c", "subnet-4b5c6d", "subnet-7a8b9c"]
+  availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+}
+----
+
+This will give you everything you need to use your database.
+You don't have to configure anything else unless you have specific requirements 🎉
