@@ -78,6 +78,13 @@ variable "allow_major_version_upgrade" {
   default = false
 }
 
+variable "allow_minor_version_upgrade" {
+  description = "Should the database be allowed to keep up to date with the latest minor version?"
+  type        = bool
+
+  default = true
+}
+
 variable "apply_immediately" {
   description = "Should changes be applied immediately or in the maintenance window?"
   type        = bool

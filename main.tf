@@ -42,9 +42,9 @@ resource "aws_security_group_rule" "from_external" {
 
   source_security_group_id = aws_security_group.this.id
 
-  protocol          = "TCP"
-  from_port         = aws_rds_cluster.this.port
-  to_port           = aws_rds_cluster.this.port
+  protocol  = "TCP"
+  from_port = aws_rds_cluster.this.port
+  to_port   = aws_rds_cluster.this.port
 }
 
 resource "aws_security_group_rule" "to_database" {
@@ -55,9 +55,9 @@ resource "aws_security_group_rule" "to_database" {
 
   source_security_group_id = var.security_group_ids[count.index]
 
-  protocol          = "TCP"
-  from_port         = aws_rds_cluster.this.port
-  to_port           = aws_rds_cluster.this.port
+  protocol  = "TCP"
+  from_port = aws_rds_cluster.this.port
+  to_port   = aws_rds_cluster.this.port
 }
 
 /*
@@ -119,9 +119,10 @@ resource "aws_rds_cluster_instance" "this" {
 
   instance_class = var.instance_class
 
-  identifier_prefix = "${aws_rds_cluster.this.cluster_identifier}-${count.index}"
-  engine            = aws_rds_cluster.this.engine
-  engine_version    = aws_rds_cluster.this.engine_version
+  identifier_prefix          = "${aws_rds_cluster.this.cluster_identifier}-${count.index}"
+  engine                     = aws_rds_cluster.this.engine
+  engine_version             = aws_rds_cluster.this.engine_version
+  auto_minor_version_upgrade = var.allow_minor_version_upgrade
 
   performance_insights_enabled = var.enable_performance_insights
   apply_immediately            = var.apply_immediately

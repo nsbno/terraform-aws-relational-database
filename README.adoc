@@ -35,3 +35,19 @@ module "database" {
 
 This will give you everything you need to use your database.
 You don't have to configure anything else unless you have specific requirements 🎉
+
+== Considerations when creating a database cluster
+
+You still have to make some decisions about your database, even though it's managed.
+Here are some things to look out for.
+
+=== Picking versions for the database
+
+The engine version constraint can take a few different forms.
+Either just a major version, or a major and minor version.
+
+For most deployments, it is recommended to _only_ specify the _major_ version.
+This is because AWS will automatically upgrade minor versions for you by default.
+
+You should disable automatic minor version upgrades if you need a specific minor version of your engine.
+This can be done by setting `allow_minor_version_upgrade` to `false`.
