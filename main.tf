@@ -34,6 +34,32 @@ resource "aws_security_group" "this" {
   }
 }
 
+resource "aws_security_group_rule" "from_external" {
+  count = length(var.security_group_ids)
+
+  security_group_id = var.security_group_ids[count.index]
+  type              = "egress"
+
+  source_security_group_id = aws_security_group.this.id
+
+  protocol          = "TCP"
+  from_port         = aws_rds_cluster.this.port
+  to_port           = aws_rds_cluster.this.port
+}
+
+resource "aws_security_group_rule" "to_database" {
+  count = length(var.security_group_ids)
+
+  security_group_id = aws_security_group.this.id
+  type              = "ingress"
+
+  source_security_group_id = var.security_group_ids[count.index]
+
+  protocol          = "TCP"
+  from_port         = aws_rds_cluster.this.port
+  to_port           = aws_rds_cluster.this.port
+}
+
 /*
  * == Cluster
  *

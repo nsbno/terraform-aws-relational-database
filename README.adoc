@@ -29,6 +29,7 @@ module "database" {
   vpc_id             = "vpc-12345"
   subnet_ids         = ["subnet-1a2b3c", "subnet-4b5c6d", "subnet-7a8b9c"]
   availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  security_group_ids = ["sg-54321"]
 }
 ----
 

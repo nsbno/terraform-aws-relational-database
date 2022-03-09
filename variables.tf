@@ -128,3 +128,10 @@ variable "subnet_ids" {
   description = "Subnets to place database instances in."
   type        = list(string)
 }
+
+variable "security_group_ids" {
+  description = "Security groups that can access the database"
+  type = list(string)
+
+  default = []
+}
