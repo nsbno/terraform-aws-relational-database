@@ -36,6 +36,14 @@ module "database" {
 This will give you everything you need to use your database.
 You don't have to configure anything else unless you have specific requirements 🎉
 
+== Examples
+
+These are some examples that can help you get going with your setup.
+
+link:examples/simple-postgres/main.tf[Simple Postgres]::
+This example shows a bare-bones setup with only a database using postgress `>=13,<14`.
+In this example minor versions will be automatically updated by AWS, and has 1 writer node.
+
 == Considerations when creating a database cluster
 
 You still have to make some decisions about your database, even though it's managed.
