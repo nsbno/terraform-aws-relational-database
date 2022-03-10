@@ -58,7 +58,7 @@ variable "instance_class" {
   description = "The instance class to use for this cluster"
   type        = string
 
-  default = "db.t3.large"
+  default = "db.t4g.medium"
 }
 
 variable "enable_performance_insights" {

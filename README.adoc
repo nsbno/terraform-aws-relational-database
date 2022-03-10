@@ -52,7 +52,7 @@ Here are some things to look out for.
 === Choosing Instance Types
 
 The instance type you should choose is based on your workload.
-By default, a `db.t3.large` is used, which should be enough for your initial deployment (and maybe forever for smaller apps).
+By default, a `db.t4g.medium` is used, which should be enough for your initial deployment (and maybe forever for smaller apps).
 
 In short you must select the instance type that
 
