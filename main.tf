@@ -66,14 +66,14 @@ resource "aws_security_group_rule" "to_database" {
  * Setup the actual aurora cluster and it's instances!
  */
 resource "random_pet" "master_username" {
-  count = var.master_username ? 0 : 1
+  count = var.master_username == null ? 0 : 1
 
   length    = 2
   separator = ""  # Avoid special characters for the separator by using no separator
 }
 
 resource "random_password" "master_password" {
-  count = var.master_password ? 0 : 1
+  count = var.master_password == null ? 0 : 1
 
   length  = 24
   special = false
@@ -100,12 +100,12 @@ resource "aws_rds_cluster" "this" {
   engine_version    = var.engine_version
   database_name     = var.database_name != null ? var.database_name : var.application_name
   storage_encrypted = true
-  master_username   = var.master_username ? var.master_username : random_pet.master_username[0]
-  master_password   = var.master_password ? var.master_password : random_password.master_password[0]
+  master_username   = var.master_username == null ? var.master_username : random_pet.master_username[0]
+  master_password   = var.master_password == null ? var.master_password : random_password.master_password[0]
 
   # Backup & Maintenance
   apply_immediately            = var.apply_immediately
-  final_snapshot_identifier    = "${var.application_name}-${random_id.snapshot_identifier}"
+  final_snapshot_identifier    = "${var.application_name}-${random_id.snapshot_identifier.id}"
   backup_retention_period      = var.backup_retention_period
   preferred_backup_window      = var.preferred_backup_window
   preferred_maintenance_window = var.preferred_maintenance_window

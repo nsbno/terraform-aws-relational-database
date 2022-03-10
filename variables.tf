@@ -121,8 +121,8 @@ variable "availability_zones" {
   type        = list(string)
 
   validation {
-    condition     = length(var.availability_zones) < 3
-    error_message = "There must be at least three availability zones"
+    condition     = length(var.availability_zones) >= 3
+    error_message = "There must be at least three availability zones."
   }
 }
 
