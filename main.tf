@@ -14,7 +14,7 @@ terraform {
  */
 resource "aws_db_subnet_group" "this" {
   name_prefix = var.application_name
-  description = "Used for ${var.application_name}'s Aurora cluster"
+  description = "Used for ${var.application_name} Aurora cluster"
 
   subnet_ids = var.subnet_ids
 
@@ -25,7 +25,7 @@ resource "aws_db_subnet_group" "this" {
 
 resource "aws_security_group" "this" {
   name        = "${var.application_name}-aurora-cluster"
-  description = "Used for ${var.application_name}'s Aurora cluster"
+  description = "Used for ${var.application_name} Aurora cluster"
 
   vpc_id = var.vpc_id
 
