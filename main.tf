@@ -66,7 +66,7 @@ resource "aws_security_group_rule" "to_database" {
  * Setup the actual aurora cluster and it's instances!
  */
 resource "random_pet" "master_username" {
-  count = var.master_username == null ? 0 : 1
+  count = var.master_username != null ? 0 : 1
 
   length    = 2
   separator = ""  # Avoid special characters for the separator by using no separator
@@ -100,8 +100,8 @@ resource "aws_rds_cluster" "this" {
   engine_version    = var.engine_version
   database_name     = var.database_name != null ? var.database_name : var.application_name
   storage_encrypted = true
-  master_username   = var.master_username == null ? var.master_username : random_pet.master_username[0]
-  master_password   = var.master_password == null ? var.master_password : random_password.master_password[0]
+  master_username   = var.master_username != null ? var.master_username : random_pet.master_username[0].id
+  master_password   = var.master_password != null ? var.master_password : random_password.master_password[0].result
 
   # Backup & Maintenance
   apply_immediately            = var.apply_immediately
