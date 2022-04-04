@@ -101,8 +101,8 @@ resource "aws_rds_cluster" "this" {
   # The application name might contain non-alphanumeric, which is not allowed for database names.
   database_name     = var.replicate_from_database != null ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
-  master_username   = var.master_username != null ? var.master_username : random_pet.master_username[0].id
-  master_password   = var.master_password != null ? var.master_password : random_password.master_password[0].result
+  master_username   = var.replicate_from_database != null ? null : (var.master_username != null ? var.master_username : random_pet.master_username[0].id)
+  master_password   = var.replicate_from_database != null ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
 
   # Backup & Maintenance
   apply_immediately            = var.apply_immediately
