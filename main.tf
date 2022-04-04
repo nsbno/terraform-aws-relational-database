@@ -106,7 +106,7 @@ resource "aws_rds_cluster" "this" {
 
   # Backup & Maintenance
   apply_immediately            = var.apply_immediately
-  final_snapshot_identifier    = "${var.application_name}-${random_id.snapshot_identifier.id}"
+  final_snapshot_identifier    = "${var.application_name}-${random_id.snapshot_identifier.hex}"
   backup_retention_period      = var.backup_retention_period
   preferred_backup_window      = var.preferred_backup_window
   preferred_maintenance_window = var.preferred_maintenance_window
