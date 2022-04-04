@@ -142,3 +142,13 @@ variable "security_group_ids" {
 
   default = []
 }
+
+/*
+ * == Restoring from backup
+ */
+variable "restore_from_snapshot" {
+  description = "Restore your database from an existing RDS snapshot using a snapshot-id or ARN"
+  type = string
+
+  default = null
+}

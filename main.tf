@@ -111,6 +111,13 @@ resource "aws_rds_cluster" "this" {
   preferred_backup_window      = var.preferred_backup_window
   preferred_maintenance_window = var.preferred_maintenance_window
   allow_major_version_upgrade  = var.allow_major_version_upgrade
+
+  # For restoring from snapshot
+  snapshot_identifier = var.restore_from_snapshot
+
+  lifecycle {
+    ignore_changes = [snapshot_identifier]
+  }
 }
 
 resource "aws_rds_cluster_instance" "this" {
