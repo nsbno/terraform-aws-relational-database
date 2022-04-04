@@ -112,6 +112,8 @@ resource "aws_rds_cluster" "this" {
   preferred_maintenance_window = var.preferred_maintenance_window
   allow_major_version_upgrade  = var.allow_major_version_upgrade
 
+  # Replicate with zero downtime
+  replication_source_identifier = var.replicate_from_database
   # For restoring from snapshot
   snapshot_identifier = var.restore_from_snapshot
 

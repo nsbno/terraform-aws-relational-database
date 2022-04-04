@@ -152,3 +152,10 @@ variable "restore_from_snapshot" {
 
   default = null
 }
+
+variable "replicate_from_database" {
+  description = "Replicate from your existing database instance or cluster."
+  type = string
+
+  default = null
+}
