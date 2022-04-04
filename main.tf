@@ -99,7 +99,7 @@ resource "aws_rds_cluster" "this" {
   engine            = "aurora-${var.engine}"
   engine_version    = var.engine_version
   # The application name might contain non-alphanumeric, which is not allowed for database names.
-  database_name     = var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", "")
+  database_name     = var.replicate_from_database != null ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
   master_username   = var.master_username != null ? var.master_username : random_pet.master_username[0].id
   master_password   = var.master_password != null ? var.master_password : random_password.master_password[0].result
