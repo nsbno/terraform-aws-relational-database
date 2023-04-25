@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.0.0"
+  required_version = "1.4.4"
 
   required_providers {
     aws = {
@@ -43,4 +43,8 @@ module "database" {
   availability_zones = data.aws_availability_zones.current.names
   subnet_ids         = data.aws_subnets.private_subnets.ids
   vpc_id             = data.aws_vpc.this.id
+
+  tags = {
+    application = "simple-postgres"
+  }
 }

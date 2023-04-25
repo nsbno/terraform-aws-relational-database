@@ -18,9 +18,9 @@ resource "aws_db_subnet_group" "this" {
 
   subnet_ids = var.subnet_ids
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "${var.application_name}-aurora-cluster"
-  }
+  })
 }
 
 resource "aws_security_group" "this" {
@@ -29,9 +29,9 @@ resource "aws_security_group" "this" {
 
   vpc_id = var.vpc_id
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "${var.application_name}-aurora-cluster"
-  }
+  })
 }
 
 resource "aws_security_group_rule" "from_external" {
@@ -69,7 +69,7 @@ resource "random_pet" "master_username" {
   count = var.master_username != null ? 0 : 1
 
   length    = 2
-  separator = ""  # Avoid special characters for the separator by using no separator
+  separator = "" # Avoid special characters for the separator by using no separator
 }
 
 resource "random_password" "master_password" {
@@ -96,8 +96,8 @@ resource "aws_rds_cluster" "this" {
   vpc_security_group_ids = [aws_security_group.this.id]
 
   # Database Setup
-  engine            = "aurora-${var.engine}"
-  engine_version    = var.engine_version
+  engine         = "aurora-${var.engine}"
+  engine_version = var.engine_version
   # The application name might contain non-alphanumeric, which is not allowed for database names.
   database_name     = var.replicate_from_database != null ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
@@ -116,6 +116,8 @@ resource "aws_rds_cluster" "this" {
   replication_source_identifier = var.replicate_from_database
   # For restoring from snapshot
   snapshot_identifier = var.restore_from_snapshot
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [snapshot_identifier]
@@ -136,6 +138,8 @@ resource "aws_rds_cluster_instance" "this" {
 
   performance_insights_enabled = var.enable_performance_insights
   apply_immediately            = var.apply_immediately
+
+  tags = var.tags
 
   lifecycle {
     # If, for example, the instance class is changed, then make sure that we
