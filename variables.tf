@@ -10,6 +10,12 @@ variable "database_name" {
   default = null
 }
 
+variable "tags" {
+  description = "A map of tags (key-value pairs) passed to resources."
+  type        = map(string)
+  default     = {}
+}
+
 /*
  * == Database Setup
  */
@@ -138,7 +144,7 @@ variable "subnet_ids" {
 
 variable "security_group_ids" {
   description = "Security groups that can access the database"
-  type = list(string)
+  type        = list(string)
 
   default = []
 }
@@ -148,14 +154,14 @@ variable "security_group_ids" {
  */
 variable "restore_from_snapshot" {
   description = "Restore your database from an existing RDS snapshot using a snapshot-id or ARN"
-  type = string
+  type        = string
 
   default = null
 }
 
 variable "replicate_from_database" {
   description = "Replicate from your existing database instance or cluster."
-  type = string
+  type        = string
 
   default = null
 }
