@@ -119,6 +119,16 @@ resource "aws_rds_cluster" "this" {
 
   tags = var.tags
 
+  dynamic "restore_to_point_in_time" {
+    for_each                   = var.clone_from_existing_cluster_arn != null ? [var.clone_from_existing_cluster_arn] : []
+
+    content {
+      source_cluster_identifier  = var.clone_from_existing_cluster_arn
+      restore_type               = "copy-on-write"
+      use_latest_restorable_time = true
+    }
+  }
+
   lifecycle {
     ignore_changes = [snapshot_identifier]
   }

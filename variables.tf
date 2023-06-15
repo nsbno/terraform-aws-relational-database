@@ -165,3 +165,10 @@ variable "replicate_from_database" {
 
   default = null
 }
+
+variable "clone_from_existing_cluster_arn" {
+  description = "If you want to clone your data from an existing cluster"
+  type = string
+
+  default = null
+}
