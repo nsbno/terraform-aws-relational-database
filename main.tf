@@ -130,7 +130,10 @@ resource "aws_rds_cluster" "this" {
   }
 
   lifecycle {
-    ignore_changes = [snapshot_identifier]
+    ignore_changes = [
+      snapshot_identifier,
+      restore_to_point_in_time,
+    ]
   }
 }
 
