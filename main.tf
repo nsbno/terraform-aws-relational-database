@@ -96,8 +96,8 @@ resource "aws_rds_cluster" "this" {
   vpc_security_group_ids = [aws_security_group.this.id]
 
   # Database Setup
-  engine         = "aurora-${var.engine}"
-  engine_version = var.engine_version
+  engine            = "aurora-${var.engine}"
+  engine_version    = var.engine_version
   # The application name might contain non-alphanumeric, which is not allowed for database names.
   database_name     = var.replicate_from_database != null ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
@@ -115,12 +115,12 @@ resource "aws_rds_cluster" "this" {
   # Replicate with zero downtime
   replication_source_identifier = var.replicate_from_database
   # For restoring from snapshot
-  snapshot_identifier = var.restore_from_snapshot
+  snapshot_identifier           = var.restore_from_snapshot
 
   tags = var.tags
 
   dynamic "restore_to_point_in_time" {
-    for_each                   = var.clone_from_existing_cluster_arn != null ? [var.clone_from_existing_cluster_arn] : []
+    for_each = var.clone_from_existing_cluster_arn != null ? [var.clone_from_existing_cluster_arn] : []
 
     content {
       source_cluster_identifier  = var.clone_from_existing_cluster_arn
@@ -151,6 +151,7 @@ resource "aws_rds_cluster_instance" "this" {
 
   performance_insights_enabled = var.enable_performance_insights
   apply_immediately            = var.apply_immediately
+  ca_cert_identifier           = var.ca_cert_identifier
 
   tags = var.tags
 

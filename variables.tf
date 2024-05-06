@@ -168,7 +168,13 @@ variable "replicate_from_database" {
 
 variable "clone_from_existing_cluster_arn" {
   description = "If you want to clone your data from an existing cluster"
-  type = string
+  type        = string
 
   default = null
+}
+
+variable "ca_cert_identifier" {
+  description = "Identifier of the CA certificate for the DB instance"
+  type        = string
+  default     = "rds-ca-rsa2048-g1"
 }
