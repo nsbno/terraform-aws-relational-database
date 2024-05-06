@@ -176,5 +176,5 @@ variable "clone_from_existing_cluster_arn" {
 variable "ca_cert_identifier" {
   description = "Identifier of the CA certificate for the DB instance"
   type        = string
-  default     = "rds-ca-2019"
+  default     = "rds-ca-rsa2048-g1"
 }
