@@ -153,6 +153,8 @@ resource "aws_rds_cluster_instance" "this" {
   apply_immediately            = var.apply_immediately
   ca_cert_identifier           = var.ca_cert_identifier
 
+  publicly_accessible = var.publicly_accessible
+
   tags = var.tags
 
   lifecycle {

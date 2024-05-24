@@ -178,3 +178,10 @@ variable "ca_cert_identifier" {
   type        = string
   default     = "rds-ca-rsa2048-g1"
 }
+
+variable "publicly_accessible" {
+    description = "Determines if the database is accessible from the public internet. Not recommended."
+    type        = bool
+
+    default = false
+}
