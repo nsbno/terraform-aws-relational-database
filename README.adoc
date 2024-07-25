@@ -5,16 +5,14 @@
 
 Set up a PostgreSQL or MySQL database using AWS Aurora with sane defaults.
 
+Using this module, you don't have to worry about backups or managing hosts.
+
 toc::[]
 
 == About
 
-This module provides an PostgreSQL or MySQL instance using AWS Aurora.
-Using this module, you don't have to worry about backups or managing hosts.
 
-== Usage
-
-Place this module together with your microservice infrastructure.
+Remember to check out the link:variables.tf[*variables*] and link:outputs.tf[*outputs*] to see all options.
 
 [source,hcl]
 ----
