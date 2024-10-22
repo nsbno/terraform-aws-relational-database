@@ -96,13 +96,16 @@ resource "aws_rds_cluster" "this" {
   vpc_security_group_ids = [aws_security_group.this.id]
 
   # Database Setup
-  engine            = "aurora-${var.engine}"
-  engine_version    = var.engine_version
+  engine         = "aurora-${var.engine}"
+  engine_version = var.engine_version
   # The application name might contain non-alphanumeric, which is not allowed for database names.
   database_name     = var.replicate_from_database != null ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
   master_username   = var.replicate_from_database != null ? null : (var.master_username != null ? var.master_username : random_pet.master_username[0].id)
   master_password   = var.replicate_from_database != null ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
+
+  # Deletion Protection
+  deletion_protection = var.deletion_protection
 
   # Backup & Maintenance
   apply_immediately            = var.apply_immediately
@@ -115,7 +118,7 @@ resource "aws_rds_cluster" "this" {
   # Replicate with zero downtime
   replication_source_identifier = var.replicate_from_database
   # For restoring from snapshot
-  snapshot_identifier           = var.restore_from_snapshot
+  snapshot_identifier = var.restore_from_snapshot
 
   tags = var.tags
 

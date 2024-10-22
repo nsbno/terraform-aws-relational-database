@@ -178,3 +178,9 @@ variable "ca_cert_identifier" {
   type        = string
   default     = "rds-ca-rsa2048-g1"
 }
+
+variable "deletion_protection" {
+  description = "If the DB cluster should have deletion protection enabled"
+  type        = bool
+  default     = true
+}
