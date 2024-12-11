@@ -88,8 +88,8 @@ resource "random_id" "snapshot_identifier" {
 }
 
 locals {
-  // see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#master_username-1
-  // Master_username and  master_password cannot be specified if a snapshot_identifier or replication_source_identifier is set
+  // see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster#restore_to_point_in_time-argument-reference
+  // master_username and database_name cannot be specified if a snapshot_identifier or replication_source_identifier is set
   // These values are set as results of var.clone_from_existing_cluster_arn or var.replicate_from_database
   use_values_from_existing_cluster = var.clone_from_existing_cluster_arn != null || var.replicate_from_database != null
 }
@@ -109,7 +109,7 @@ resource "aws_rds_cluster" "this" {
   database_name     = local.use_values_from_existing_cluster ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
   master_username   = local.use_values_from_existing_cluster ? null : (var.master_username != null ? var.master_username : random_pet.master_username[0].id)
-  master_password   = local.use_values_from_existing_cluster ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
+  master_password   = var.replicate_from_database != null ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
 
   # Deletion Protection
   deletion_protection = var.deletion_protection
