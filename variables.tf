@@ -205,3 +205,10 @@ variable "deletion_protection" {
   type        = bool
   default     = true
 }
+
+variable "enable_data_api" {
+  description = "Enable the RDS Data API for this cluster. Only supported for Aurora PostgreSQL >= 17.7."
+  type        = bool
+
+  default = false
+}

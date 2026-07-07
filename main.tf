@@ -115,6 +115,9 @@ resource "aws_rds_cluster" "this" {
   manage_master_user_password   = var.manage_master_user_password ? true : null
   master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
 
+  # Data API
+  enable_http_endpoint = var.enable_data_api ? true : null
+
   # Deletion Protection
   deletion_protection = var.deletion_protection
 
@@ -147,6 +150,10 @@ resource "aws_rds_cluster" "this" {
     precondition {
       condition     = !(var.master_password != null && var.manage_master_user_password)
       error_message = "master_password and manage_master_user_password cannot both be set."
+    }
+    precondition {
+      condition     = !var.enable_data_api || var.engine == "postgresql"
+      error_message = "enable_data_api is only supported for the postgresql engine (Aurora PostgreSQL >= 17.7)."
     }
     ignore_changes = [
       snapshot_identifier,
