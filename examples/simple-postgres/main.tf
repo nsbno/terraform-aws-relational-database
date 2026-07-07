@@ -1,10 +1,10 @@
 terraform {
-  required_version = "1.4.4"
+  required_version = "~> 1.15"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.0.0, <4.0.0"
+      version = "~> 6.0"
     }
   }
 }
@@ -38,7 +38,7 @@ module "database" {
   application_name = "tut-tut-tog"
 
   engine         = "postgresql"
-  engine_version = "13"
+  engine_version = "17"
 
   availability_zones = data.aws_availability_zones.current.names
   subnet_ids         = data.aws_subnets.private_subnets.ids
@@ -47,4 +47,10 @@ module "database" {
   tags = {
     application = "simple-postgres"
   }
+
+  manage_master_user_password              = true
+  password_rotation_automatically_after_days = 30
+
+  # Optionally encrypt the secret with a custom KMS key:
+  # master_user_secret_kms_key_id = "alias/my-key"
 }

@@ -44,10 +44,31 @@ variable "master_username" {
 }
 
 variable "master_password" {
-  description = "The password of the master user"
+  description = "The password of the master user. Cannot be set together with manage_master_user_password."
   type        = string
 
   default = null
+}
+
+variable "manage_master_user_password" {
+  description = "Let Aurora manage the master password in AWS Secrets Manager, including automatic rotation. Cannot be set together with master_password."
+  type        = bool
+
+  default = false
+}
+
+variable "master_user_secret_kms_key_id" {
+  description = "KMS key ID, ARN, or alias used to encrypt the managed master password secret. Only used when manage_master_user_password is true."
+  type        = string
+
+  default = null
+}
+
+variable "password_rotation_automatically_after_days" {
+  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true."
+  type        = number
+
+  default = 30
 }
 
 /*
