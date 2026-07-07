@@ -41,7 +41,7 @@ output "master_password" {
 
 output "master_user_secret_arn" {
   description = "ARN of the Secrets Manager secret for the managed master password. Null when manage_master_user_password is false."
-  value       = try(aws_rds_cluster.this.master_user_secret[0].secret_arn, null)
+  value       = var.manage_master_user_password ? aws_rds_cluster.this.master_user_secret[0].secret_arn : null
 }
 
 output "final_snapshot_identifier" {
