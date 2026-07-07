@@ -49,7 +49,6 @@ module "database" {
   }
 
   manage_master_user_password              = true
-  password_rotation_automatically_after_days = 30
 
   # Optionally encrypt the secret with a custom KMS key:
   # master_user_secret_kms_key_id = "alias/my-key"
