@@ -53,6 +53,8 @@ Your application never sees the password directly — it fetches the current cre
 > In the first apply, only set `manage_master_user_password = true` and leave your application config pointing at its existing secret — Aurora will rotate the password but your app keeps running.
 > In the second apply, update your application to reference `master_user_secret_arn` and remove the old manually-managed secret.
 > Keep the two applies close together to minimise downtime between the password change and your app picking up the new credentials.
+>
+> Note: Aurora rotates the password automatically on its own schedule. Set `password_rotation_automatically_after_days` only if you want to enforce a specific rotation interval.
 
 1. Grant your task role permission to read the secret:
 

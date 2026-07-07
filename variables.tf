@@ -65,10 +65,10 @@ variable "master_user_secret_kms_key_id" {
 }
 
 variable "password_rotation_automatically_after_days" {
-  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true."
+  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true. When null, Aurora rotates the password automatically on its own default schedule."
   type        = number
 
-  default = 30
+  default = null
 }
 
 /*
