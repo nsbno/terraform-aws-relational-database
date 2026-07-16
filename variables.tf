@@ -51,7 +51,7 @@ variable "master_password" {
 }
 
 variable "manage_master_user_password" {
-  description = "Let Aurora manage the master password in AWS Secrets Manager, including automatic rotation. Cannot be set together with master_password."
+  description = "Let Aurora manage the master password in AWS Secrets Manager. Set password_rotation_automatically_after_days to enable a rotation schedule. Cannot be set together with master_password."
   type        = bool
 
   default = false
@@ -65,10 +65,22 @@ variable "master_user_secret_kms_key_id" {
 }
 
 variable "password_rotation_automatically_after_days" {
-  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true. When null, Aurora rotates the password automatically on its own default schedule."
+  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true. When null, no rotation schedule is created and the password is not automatically rotated."
   type        = number
 
-  default = null
+  default = 30
+
+  validation {
+    condition     = var.password_rotation_automatically_after_days == null || var.password_rotation_automatically_after_days >= 1
+    error_message = "password_rotation_automatically_after_days must be at least 1."
+  }
+}
+
+variable "rotate_immediately" {
+  description = "When true, AWS rotates the secret immediately when the rotation schedule is first created. Set to false during initial migration to avoid changing the password before the app is ready to read the new secret."
+  type        = bool
+
+  default = true
 }
 
 /*

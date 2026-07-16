@@ -165,7 +165,8 @@ resource "aws_rds_cluster" "this" {
 resource "aws_secretsmanager_secret_rotation" "this" {
   count = var.manage_master_user_password && var.password_rotation_automatically_after_days != null ? 1 : 0
 
-  secret_id = aws_rds_cluster.this.master_user_secret[0].secret_arn
+  secret_id          = aws_rds_cluster.this.master_user_secret[0].secret_arn
+  rotate_immediately = var.rotate_immediately
 
   rotation_rules {
     automatically_after_days = var.password_rotation_automatically_after_days
