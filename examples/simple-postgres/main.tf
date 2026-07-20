@@ -50,7 +50,7 @@ module "database" {
 
   manage_master_user_password              = true
 
-  # Optionally encrypt the secret with a custom KMS key:
+  # Uncomment to encrypt the secret with a custom KMS key:
   # master_user_secret_kms_key_id = "alias/my-key"
 
   # Uncomment to enable the RDS Data API (requires Aurora PostgreSQL >= 17.7):
