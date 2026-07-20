@@ -35,7 +35,25 @@ You have two options for the master password:
 - **Managed (recommended):** Set `manage_master_user_password = true`. Aurora creates and stores the password in AWS Secrets Manager. Rotation is enabled by default every 30 days.
 - **Self-managed:** Set `master_password` directly. You are responsible for storing and rotating the secret.
 
-When enabling rotation on an existing database for the first time, set `rotate_immediately = false` to avoid an immediate password change before your application is ready to read the new secret.
+#### Migrating an existing cluster to managed passwords
+
+Enabling `manage_master_user_password` on an existing cluster requires **two Terraform applies** and will cause brief downtime. Always set `rotate_immediately = false` when migrating such that Aurora does not rotate the password a second time on the second apply.
+
+There are two moments where the password changes during migration:
+
+**Apply 1**: Aurora immediately generates a new password and stores it in Secrets Manager. The old password stops working at this point. Because Terraform plans everything upfront against the current state (where the secret doesn't exist yet), `master_user_secret_arn` outputs `null` and the rotation schedule is not created yet.
+
+**Apply 2**: The ARN is now in state, so the rotation schedule is created. Without `rotate_immediately = false`, Aurora would rotate the password *again* immediately at this point, causing a second outage.
+
+To minimise downtime, keep a fallback secret with the old credentials and use `coalesce()` so your application switches to the managed secret automatically on the second apply rather than staying down between the two:
+
+```hcl
+locals {
+  db_credentials_arn = coalesce(module.database.master_user_secret_arn, aws_secretsmanager_secret.db_credentials_fallback.arn)
+}
+```
+
+Plan for a short maintenance window covering both applies. Once the second apply is complete and your application is healthy, remove the fallback secret.
 
 ### Instance type
 
