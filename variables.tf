@@ -44,10 +44,43 @@ variable "master_username" {
 }
 
 variable "master_password" {
-  description = "The password of the master user"
+  description = "The password of the master user. Cannot be set together with manage_master_user_password."
   type        = string
 
   default = null
+}
+
+variable "manage_master_user_password" {
+  description = "Let Aurora manage the master password in AWS Secrets Manager. Set password_rotation_automatically_after_days to enable a rotation schedule. Cannot be set together with master_password."
+  type        = bool
+
+  default = false
+}
+
+variable "master_user_secret_kms_key_id" {
+  description = "KMS key ID, ARN, or alias used to encrypt the managed master password secret. Only used when manage_master_user_password is true."
+  type        = string
+
+  default = null
+}
+
+variable "password_rotation_automatically_after_days" {
+  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true. When null, no rotation schedule is created and the password is not automatically rotated."
+  type        = number
+
+  default = 30
+
+  validation {
+    condition     = var.password_rotation_automatically_after_days == null || var.password_rotation_automatically_after_days >= 1
+    error_message = "password_rotation_automatically_after_days must be at least 1."
+  }
+}
+
+variable "rotate_immediately" {
+  description = "When true, AWS rotates the secret immediately when the rotation schedule is first created. Set to false during initial migration to avoid changing the password before the app is ready to read the new secret."
+  type        = bool
+
+  default = true
 }
 
 /*
@@ -183,4 +216,11 @@ variable "deletion_protection" {
   description = "If the DB cluster should have deletion protection enabled"
   type        = bool
   default     = true
+}
+
+variable "enable_data_api" {
+  description = "Enable the RDS Data API for this cluster. Only supported for Aurora PostgreSQL >= 17.7."
+  type        = bool
+
+  default = false
 }
