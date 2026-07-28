@@ -37,23 +37,17 @@ You have two options for the master password:
 
 #### Migrating an existing cluster to managed passwords
 
-Enabling `manage_master_user_password` on an existing cluster requires **two Terraform applies** and will cause brief downtime. Always set `rotate_immediately = false` when migrating such that Aurora does not rotate the password a second time on the second apply.
-
-There are two moments where the password changes during migration:
-
-**Apply 1**: Aurora immediately generates a new password and stores it in Secrets Manager. The old password stops working at this point. Because Terraform plans everything upfront against the current state (where the secret doesn't exist yet), `master_user_secret_arn` outputs `null` and the rotation schedule is not created yet.
-
-**Apply 2**: The ARN is now in state, so the rotation schedule is created. Without `rotate_immediately = false`, Aurora would rotate the password *again* immediately at this point, causing a second outage.
-
-To minimise downtime, keep a fallback secret with the old credentials and use `coalesce()` so your application switches to the managed secret automatically on the second apply rather than staying down between the two:
+Enabling `manage_master_user_password` on an existing cluster will cause brief downtime. Set `rotate_immediately = false` to prevent Aurora from rotating the password a second time immediately after the rotation schedule is created.
 
 ```hcl
-locals {
-  db_credentials_arn = coalesce(module.database.master_user_secret_arn, aws_secretsmanager_secret.db_credentials_fallback.arn)
+module "database" {
+  ...
+  manage_master_user_password = true
+  rotate_immediately          = false
 }
 ```
 
-Plan for a short maintenance window covering both applies. Once the second apply is complete and your application is healthy, remove the fallback secret.
+Plan for a short maintenance window. Once the apply is complete and your application is healthy, you can remove `rotate_immediately = false` (or leave it, it only affects the initial creation of the rotation schedule).
 
 ### Instance type
 
