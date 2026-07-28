@@ -32,8 +32,27 @@ See [variables.tf](variables.tf) and [outputs.tf](outputs.tf) for all available 
 
 You have two options for the master password:
 
-- **Managed (recommended):** Set `manage_master_user_password = true`. Aurora creates and stores the password in AWS Secrets Manager. Rotation is enabled by default every 30 days.
+- **Managed (recommended):** Set `manage_master_user_password = true`. Aurora creates and stores the password in AWS Secrets Manager.
 - **Self-managed:** Set `master_password` directly. You are responsible for storing and rotating the secret.
+
+#### Automatic rotation
+
+Rotation is enabled by default every 30 days when `manage_master_user_password = true`. Override the interval with `rotate_after_days`:
+
+```hcl
+credentials_auto_rotation = {
+  rotate_after_days = 14
+}
+```
+
+Set `enabled = false` to temporarily disable rotation without removing the configuration:
+
+```hcl
+credentials_auto_rotation = {
+  enabled = false
+}
+```
+
 
 #### Migrating an existing cluster to managed passwords
 
@@ -43,11 +62,20 @@ Enabling `manage_master_user_password` on an existing cluster will cause brief d
 module "database" {
   ...
   manage_master_user_password = true
-  rotate_immediately          = false
+  credentials_auto_rotation = {
+    rotate_immediately = false
+  }
 }
 ```
 
-Plan for a short maintenance window. Once the apply is complete and your application is healthy, you can remove `rotate_immediately = false` (or leave it, it only affects the initial creation of the rotation schedule).
+Migration requires **two applies** due to a limitation in the AWS provider: `master_user_secret` is not marked as known-after-apply when `manage_master_user_password` is toggled, so the rotation schedule cannot be planned until the cluster has been updated. Apply the cluster first, then apply everything:
+
+```bash
+terraform apply -target=module.database.aws_rds_cluster.this
+terraform apply
+```
+
+Plan for a short maintenance window covering both applies. Once complete and your application is healthy, you can remove `rotate_immediately = false` (or leave it, it only affects the initial creation of the rotation schedule).
 
 ### Instance type
 

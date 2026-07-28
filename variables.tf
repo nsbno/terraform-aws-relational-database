@@ -51,7 +51,7 @@ variable "master_password" {
 }
 
 variable "manage_master_user_password" {
-  description = "Let Aurora manage the master password in AWS Secrets Manager. Set password_rotation_automatically_after_days to enable a rotation schedule. Cannot be set together with master_password."
+  description = "Let Aurora manage the master password in AWS Secrets Manager. Set credentials_auto_rotation to enable a rotation schedule. Cannot be set together with master_password."
   type        = bool
 
   default = false
@@ -64,23 +64,22 @@ variable "master_user_secret_kms_key_id" {
   default = null
 }
 
-variable "password_rotation_automatically_after_days" {
-  description = "Number of days between automatic password rotations. Only used when manage_master_user_password is true. When null, no rotation schedule is created and the password is not automatically rotated."
-  type        = number
-
-  default = 30
+variable "credentials_auto_rotation" {
+  description = "Configures automatic rotation of the master user password. Only used when manage_master_user_password is true. Set to null to disable rotation entirely, or set enabled = false to keep the configuration without rotating."
+  type = object({
+    enabled            = optional(bool, true)
+    rotate_after_days  = optional(number, 30)
+    rotate_immediately = optional(bool, false)
+  })
+  nullable = true
+  default = {
+    rotate_after_days = 30
+  }
 
   validation {
-    condition     = var.password_rotation_automatically_after_days == null || var.password_rotation_automatically_after_days >= 1
-    error_message = "password_rotation_automatically_after_days must be at least 1."
+    condition     = var.credentials_auto_rotation == null || var.credentials_auto_rotation.rotate_after_days >= 1
+    error_message = "rotate_after_days must be at least 1."
   }
-}
-
-variable "rotate_immediately" {
-  description = "When true, AWS rotates the secret immediately when the rotation schedule is first created. Set to false during initial migration to avoid changing the password before the app is ready to read the new secret."
-  type        = bool
-
-  default = true
 }
 
 /*
