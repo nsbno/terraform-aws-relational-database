@@ -48,7 +48,7 @@ module "database" {
     application = "simple-postgres"
   }
 
-  manage_master_user_password              = true
+  managed_master_user_password = true
 
   # Uncomment to encrypt the secret with a custom KMS key:
   # master_user_secret_kms_key_id = "alias/my-key"

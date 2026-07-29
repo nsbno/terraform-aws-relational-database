@@ -73,7 +73,7 @@ resource "random_pet" "master_username" {
 }
 
 resource "random_password" "master_password" {
-  count = var.master_password == null && !var.manage_master_user_password ? 1 : 0
+  count = var.master_password == null && !var.managed_master_user_password ? 1 : 0
 
   length  = 24
   special = false
@@ -109,11 +109,11 @@ resource "aws_rds_cluster" "this" {
   database_name     = local.use_values_from_existing_cluster ? null : (var.database_name != null ? var.database_name : replace(var.application_name, "/[^a-zA-Z\\d]/", ""))
   storage_encrypted = true
   master_username   = local.use_values_from_existing_cluster ? null : (var.master_username != null ? var.master_username : random_pet.master_username[0].id)
-  master_password   = (var.replicate_from_database != null || var.manage_master_user_password) ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
+  master_password   = (var.replicate_from_database != null || var.managed_master_user_password) ? null : (var.master_password != null ? var.master_password : random_password.master_password[0].result)
 
   # Managed master password (Aurora-owned secret in Secrets Manager)
-  manage_master_user_password   = var.manage_master_user_password ? true : null
-  master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
+  manage_master_user_password   = var.managed_master_user_password ? true : null
+  master_user_secret_kms_key_id = var.managed_master_user_password ? var.master_user_secret_kms_key_id : null
 
   # Data API
   enable_http_endpoint = var.enable_data_api ? true : null
@@ -148,8 +148,8 @@ resource "aws_rds_cluster" "this" {
 
   lifecycle {
     precondition {
-      condition     = !(var.master_password != null && var.manage_master_user_password)
-      error_message = "master_password and manage_master_user_password cannot both be set."
+      condition     = !(var.master_password != null && var.managed_master_user_password)
+      error_message = "master_password and managed_master_user_password cannot both be set."
     }
     precondition {
       condition     = !var.enable_data_api || var.engine == "postgresql"
@@ -163,7 +163,7 @@ resource "aws_rds_cluster" "this" {
 }
 
 resource "aws_secretsmanager_secret_rotation" "this" {
-  count = var.manage_master_user_password && var.credentials_auto_rotation != null && var.credentials_auto_rotation.enabled ? 1 : 0
+  count = var.managed_master_user_password && var.credentials_auto_rotation != null && var.credentials_auto_rotation.enabled ? 1 : 0
 
   secret_id          = aws_rds_cluster.this.master_user_secret[0].secret_arn
   rotate_immediately = var.credentials_auto_rotation.rotate_immediately

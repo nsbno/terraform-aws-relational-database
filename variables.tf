@@ -44,13 +44,13 @@ variable "master_username" {
 }
 
 variable "master_password" {
-  description = "The password of the master user. Cannot be set together with manage_master_user_password."
+  description = "The password of the master user. Cannot be set together with managed_master_user_password."
   type        = string
 
   default = null
 }
 
-variable "manage_master_user_password" {
+variable "managed_master_user_password" {
   description = "Let Aurora manage the master password in AWS Secrets Manager. Set credentials_auto_rotation to enable a rotation schedule. Cannot be set together with master_password."
   type        = bool
 
@@ -58,14 +58,14 @@ variable "manage_master_user_password" {
 }
 
 variable "master_user_secret_kms_key_id" {
-  description = "KMS key ID, ARN, or alias used to encrypt the managed master password secret. Only used when manage_master_user_password is true."
+  description = "KMS key ID, ARN, or alias used to encrypt the managed master password secret. Only used when managed_master_user_password is true."
   type        = string
 
   default = null
 }
 
 variable "credentials_auto_rotation" {
-  description = "Configures automatic rotation of the master user password. Only used when manage_master_user_password is true. Set to null to disable rotation entirely, or set enabled = false to keep the configuration without rotating."
+  description = "Configures automatic rotation of the master user password. Only used when managed_master_user_password is true. Set to null to disable rotation entirely, or set enabled = false to keep the configuration without rotating."
   type = object({
     enabled            = optional(bool, true)
     rotate_after_days  = optional(number, 30)

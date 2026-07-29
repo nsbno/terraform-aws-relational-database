@@ -20,7 +20,7 @@ module "database" {
   availability_zones = data.aws_availability_zones.current.names
   security_group_ids = [module.service.security_group_id]
 
-  manage_master_user_password = true
+  managed_master_user_password = true
 }
 ```
 
@@ -32,12 +32,12 @@ See [variables.tf](variables.tf) and [outputs.tf](outputs.tf) for all available 
 
 You have two options for the master password:
 
-- **Managed (recommended):** Set `manage_master_user_password = true`. Aurora creates and stores the password in AWS Secrets Manager.
+- **Managed (recommended):** Set `managed_master_user_password = true`. Aurora creates and stores the password in AWS Secrets Manager.
 - **Self-managed:** Set `master_password` directly. You are responsible for storing and rotating the secret.
 
 #### Automatic rotation
 
-Rotation is enabled by default every 30 days when `manage_master_user_password = true`. Override the interval with `rotate_after_days`:
+Rotation is enabled by default every 30 days when `managed_master_user_password = true`. Override the interval with `rotate_after_days`:
 
 ```hcl
 credentials_auto_rotation = {
@@ -56,19 +56,19 @@ credentials_auto_rotation = {
 
 #### Migrating an existing cluster to managed passwords
 
-Enabling `manage_master_user_password` on an existing cluster will cause brief downtime. Set `rotate_immediately = false` to prevent Aurora from rotating the password a second time immediately after the rotation schedule is created.
+Enabling `managed_master_user_password` on an existing cluster will cause brief downtime. Set `rotate_immediately = false` to prevent Aurora from rotating the password a second time immediately after the rotation schedule is created.
 
 ```hcl
 module "database" {
   ...
-  manage_master_user_password = true
+  managed_master_user_password = true
   credentials_auto_rotation = {
     rotate_immediately = false
   }
 }
 ```
 
-Migration requires **two applies** due to a limitation in the AWS provider: `master_user_secret` is not marked as known-after-apply when `manage_master_user_password` is toggled, so the rotation schedule cannot be planned until the cluster has been updated. Apply the cluster first, then apply everything:
+Migration requires **two applies** due to a limitation in the AWS provider: `master_user_secret` is not marked as known-after-apply when `managed_master_user_password` is toggled, so the rotation schedule cannot be planned until the cluster has been updated. Apply the cluster first, then apply everything:
 
 ```bash
 terraform apply -target=module.database.aws_rds_cluster.this
