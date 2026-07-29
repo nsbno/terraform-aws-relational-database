@@ -44,10 +44,42 @@ variable "master_username" {
 }
 
 variable "master_password" {
-  description = "The password of the master user"
+  description = "The password of the master user. Cannot be set together with managed_master_user_password."
   type        = string
 
   default = null
+}
+
+variable "managed_master_user_password" {
+  description = "Let Aurora manage the master password in AWS Secrets Manager. Set credentials_auto_rotation to enable a rotation schedule. Cannot be set together with master_password."
+  type        = bool
+
+  default = false
+}
+
+variable "master_user_secret_kms_key_id" {
+  description = "KMS key ID, ARN, or alias used to encrypt the managed master password secret. Only used when managed_master_user_password is true."
+  type        = string
+
+  default = null
+}
+
+variable "credentials_auto_rotation" {
+  description = "Configures automatic rotation of the master user password. Only used when managed_master_user_password is true. Set to null to disable rotation entirely, or set enabled = false to keep the configuration without rotating."
+  type = object({
+    enabled            = optional(bool, true)
+    rotate_after_days  = optional(number, 30)
+    rotate_immediately = optional(bool, false)
+  })
+  nullable = true
+  default = {
+    rotate_after_days = 30
+  }
+
+  validation {
+    condition     = var.credentials_auto_rotation == null || var.credentials_auto_rotation.rotate_after_days >= 1
+    error_message = "rotate_after_days must be at least 1."
+  }
 }
 
 /*
@@ -183,4 +215,11 @@ variable "deletion_protection" {
   description = "If the DB cluster should have deletion protection enabled"
   type        = bool
   default     = true
+}
+
+variable "enable_data_api" {
+  description = "Enable the RDS Data API for this cluster. Only supported for Aurora PostgreSQL >= 17.7."
+  type        = bool
+
+  default = false
 }

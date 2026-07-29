@@ -39,6 +39,11 @@ output "master_password" {
   value       = aws_rds_cluster.this.master_password
 }
 
+output "master_user_secret_arn" {
+  description = "ARN of the Secrets Manager secret for the managed master password. Null when manage_master_user_password is false."
+  value       = length(aws_rds_cluster.this.master_user_secret) > 0 ? aws_rds_cluster.this.master_user_secret[0].secret_arn : null
+}
+
 output "final_snapshot_identifier" {
   description = "Identifier for the final snapshot created on destroy"
   value       = aws_rds_cluster.this.final_snapshot_identifier
